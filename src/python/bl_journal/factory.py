@@ -3,7 +3,14 @@ Created on Jul 31, 2014
 
 @author: Petr Muller
 '''
-import rpm
+
+try:
+  import rpm
+except ImportError:
+  # RPMs not supported
+  # pylint: disable=invalid-name
+  rpm = None
+
 from bl_journal.journal import Journal
 import os
 import time
@@ -92,7 +99,7 @@ class EnvironmentProbe(object):
   EV_PACKAGE_NAME = "packagename"
 
   def __init__(self):
-    self.rpm = rpm.ts()
+    self.rpm = rpm if rpm else None
     self.environment = None
 
   def collectEnvironmentVariables(self):
@@ -104,7 +111,7 @@ class EnvironmentProbe(object):
   def collectRPMVersion(self, package):
     """Determines a N-V-R for installed packages. Returns None if package is not installed"""
     # pylint: disable=no-member
-    found = self.rpm.dbMatch("name", package)
+    found = self.rpm.dbMatch("name", package) if self.rpm else None
     return "%(name)s-%(version)s-%(release)s" % found.next() if found else None
 
   def collectRPMs(self):
@@ -140,7 +147,7 @@ class EnvironmentProbe(object):
       return None
 
     # pylint: disable=no-member
-    testinfo = self.rpm.dbMatch("name", package)
+    testinfo = self.rpm.dbMatch("name", package) if self.rpm else None
     if not testinfo:
       return None
 
