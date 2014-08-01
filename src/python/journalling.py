@@ -69,6 +69,7 @@ def main(argv=None):  # IGNORE:C0111
 USAGE
 ''' % (program_shortdesc, str(__date__))
 
+  # pylint: disable=broad-except
   try:
     # Setup argument parser
     parser = ArgumentParser(description=program_license,
@@ -85,7 +86,6 @@ USAGE
   except KeyboardInterrupt:
     ### handle keyboard interrupt ###
     return 0
-  # pylint: disable=broad-except
   except Exception, caught_exception:
     if DEBUG or TESTRUN:
       traceback.print_exc()
