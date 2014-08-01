@@ -85,6 +85,7 @@ USAGE
   except KeyboardInterrupt:
     ### handle keyboard interrupt ###
     return 0
+  # pylint: disable=broad-except
   except Exception, caught_exception:
     if DEBUG or TESTRUN:
       traceback.print_exc()
