@@ -1,5 +1,10 @@
 language: python
 python:
   - "2.7"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install python2.7-rpm
 install: "pip install pylint"
+virtualenv:
+    system_site_packages: true
 script: nosetests && pylint --rcfile=.pylintrc src/python/journalling.py && pylint --rcfile=.pylintrc src/python/bl_journal

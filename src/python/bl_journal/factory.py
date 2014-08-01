@@ -4,7 +4,6 @@ Created on Jul 31, 2014
 @author: Petr Muller
 '''
 
-# pylint: disable=import-error
 try:
   import rpm
 except ImportError:
