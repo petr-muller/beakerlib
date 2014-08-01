@@ -2,4 +2,4 @@ language: python
 python:
   - "2.7"
 install: "pip install pylint"
-script: nosetests && pylint src/python/journalling.py && pylint src/python/journal
+script: nosetests && pylint --rcfile=.pylintrc src/python/journalling.py && pylint --rcfile=.pylintrc src/python/bl_journal
