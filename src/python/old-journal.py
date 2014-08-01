@@ -158,65 +158,6 @@ class Journal(object):
   __childNodeValue = staticmethod(__childNodeValue)
 
   #@staticmethod
-  def __get_hw_cpu():
-    """Helper to read /proc/cpuinfo and grep count and type of CPUs from there"""
-    count = 0
-    type = 'unknown'
-    try:
-      fd = open('/proc/cpuinfo')
-      expr = re.compile('^model name[\t ]+: +(.+)$')
-      for line in fd.readlines():
-        match = expr.search(line)
-        if match != None:
-          count += 1
-          type = match.groups()[0]
-      fd.close()
-    except:
-      pass
-    return "%s x %s" % (count, type)
-  __get_hw_cpu = staticmethod(__get_hw_cpu)
-
-  #@staticmethod
-  def __get_hw_ram():
-    """Helper to read /proc/meminfo and grep size of RAM from there"""
-    size = 'unknown'
-    try:
-      fd = open('/proc/meminfo')
-      expr = re.compile('^MemTotal: +([0-9]+) +kB$')
-      for line in fd.readlines():
-        match = expr.search(line)
-        if match != None:
-          size = int(match.groups()[0])/1024
-          break
-      fd.close()
-    except:
-      pass
-    return "%s MB" % size
-  __get_hw_ram = staticmethod(__get_hw_ram)
-
-  #@staticmethod
-  def __get_hw_hdd():
-    """Helper to parse size of disks from `df` output"""
-    size = 0.0
-    try:
-      import subprocess
-      output = subprocess.Popen(['df', '-k', '-P', '--local', '--exclude-type=tmpfs'], stdout=subprocess.PIPE).communicate()[0]
-      output = output.split('\n')
-    except ImportError:
-      output = os.popen('df -k -P --local --exclude-type=tmpfs')
-      output = output.readlines()
-    expr = re.compile('^(/[^ ]+) +([0-9]+) +[0-9]+ +[0-9]+ +[0-9]+% +[^ ]+$')
-    for line in output:
-      match = expr.search(line)
-      if match != None:
-        size = size + float(match.groups()[1])/1024/1024
-    if size == 0:
-      return 'unknown'
-    else:
-      return "%.1f GB" % size
-  __get_hw_hdd = staticmethod(__get_hw_hdd)
-
-  #@staticmethod
   def createLog(severity, full_journal=False):
     jrnl = Journal.openJournal()
     Journal.printHeadLog("TEST PROTOCOL")
@@ -290,20 +231,6 @@ class Journal(object):
   createLog = staticmethod(createLog)
 
   #@staticmethod
-  def getTestRpmBuilt(ts):
-    package = os.getenv("packagename")
-    if not package:
-      return None
-
-    testInfo = ts.dbMatch("name", package)
-    if not testInfo:
-      return None
-
-    buildtime = time.gmtime(int(testInfo.next().format("%{BUILDTIME}")))
-    return time.strftime(timeFormat, buildtime)
-  getTestRpmBuilt = staticmethod(getTestRpmBuilt)
-
-  #@staticmethod
   def determinePackage(test):
     envPackage = os.environ.get("PACKAGE")
     if not envPackage:
@@ -373,53 +300,6 @@ class Journal(object):
     impl = getDOMImplementation()
     newdoc = impl.createDocument(None, "BEAKER_TEST", None)
     top_element = newdoc.documentElement
-    if testid:
-      testidEl    = newdoc.createElement("test_id")
-      testidCon   = newdoc.createTextNode(str(testid))
-
-    packageEl   = newdoc.createElement("package")
-    if not package:
-      package = "unknown"
-    packageCon = newdoc.createTextNode(str(package))
-
-    ts = rpm.ts()
-    mi = ts.dbMatch("name", "beakerlib")
-    beakerlibRpmEl = newdoc.createElement("beakerlib_rpm")
-    if mi:
-      beakerlib_rpm = mi.next()
-      beakerlibRpmCon = newdoc.createTextNode("%(name)s-%(version)s-%(release)s " % beakerlib_rpm)
-    else:
-      beakerlibRpmCon = newdoc.createTextNode("not installed")
-
-    mi = ts.dbMatch("name", "beakerlib-redhat")
-    beakerlibRedhatRpmEl = newdoc.createElement("beakerlib_redhat_rpm")
-    if mi:
-      beakerlib_redhat_rpm = mi.next()
-      beakerlibRedhatRpmCon = newdoc.createTextNode("%(name)s-%(version)s-%(release)s " % beakerlib_redhat_rpm)
-    else:
-      beakerlibRedhatRpmCon = newdoc.createTextNode("not installed")
-
-    testRpmVersion = os.getenv("testversion")
-    if testRpmVersion:
-      testVersionEl = newdoc.createElement("testversion")
-      testVersionCon = newdoc.createTextNode(testRpmVersion)
-
-    testRpmBuilt = Journal.getTestRpmBuilt(ts)
-    if testRpmBuilt:
-      testRpmBuiltEl = newdoc.createElement("testbuilt")
-      testRpmBuiltCon = newdoc.createTextNode(testRpmBuilt)
-
-    startedEl   = newdoc.createElement("starttime")
-    startedCon  = newdoc.createTextNode(time.strftime(timeFormat))
-
-    endedEl     = newdoc.createElement("endtime")
-    endedCon    = newdoc.createTextNode(time.strftime(timeFormat))
-
-    hostnameEl     = newdoc.createElement("hostname")
-    hostnameCon   = newdoc.createTextNode(socket.getfqdn())
-
-    archEl     = newdoc.createElement("arch")
-    archCon   = newdoc.createTextNode(os.uname()[-1])
 
     hw_cpuEl    = newdoc.createElement("hw_cpu")
     hw_cpuCon   = newdoc.createTextNode(Journal.__get_hw_cpu())
@@ -430,22 +310,7 @@ class Journal(object):
     hw_hddEl    = newdoc.createElement("hw_hdd")
     hw_hddCon   = newdoc.createTextNode(Journal.__get_hw_hdd())
 
-    testEl      = newdoc.createElement("testname")
-    if (test):
-      testCon = newdoc.createTextNode(str(test))
-    else:
-      testCon = newdoc.createTextNode("unknown")
-
     pkgdetails = Journal.collectPackageDetails(newdoc, [package])
-
-    releaseEl   = newdoc.createElement("release")
-    try:
-      with open("/etc/redhat-release", "r") as release_file:
-        release = release_file.read().strip()
-    except IOError:
-      release = "unknown"
-    release = unicode(release, 'utf-8', errors='replace')
-    releaseCon  = newdoc.createTextNode(release.translate(xmlTrans))
 
     logEl       = newdoc.createElement("log")
     purposeEl   = newdoc.createElement("purpose")

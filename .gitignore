@@ -20,4 +20,4 @@ src/test/.*.old
 .pydevproject
 .performance-history.dat
 performance.svg
-
+.settings
