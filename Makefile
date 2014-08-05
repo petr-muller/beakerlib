@@ -49,4 +49,4 @@ check:
 python-check:
 	pylint --rcfile=.pylintrc src/python/journalling.py
 	pylint --rcfile=.pylintrc src/python/bl_journal
-	cd src/python/bl_journal/; nosetests
+	cd src/python/bl_journal/; nosetests --with-coverage
