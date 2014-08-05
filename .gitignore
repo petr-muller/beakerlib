@@ -21,3 +21,5 @@ src/test/.*.old
 .performance-history.dat
 performance.svg
 .settings
+.coverage
+.externalToolBuilders
