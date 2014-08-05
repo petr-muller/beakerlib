@@ -4,18 +4,16 @@ Created on Jul 31, 2014
 @author: Petr Muller
 '''
 
-try:
-  import rpm
-except ImportError:
-  # RPMs not supported
-  # pylint: disable=invalid-name
-  rpm = None
-
 from bl_journal.journal import Journal
 import os
 import time
 import socket
 import re
+from bl_journal.util import JournalException
+
+class EnvironmentProbeError(JournalException):
+  """Error thrown whenever an environment probe fails to retrieved necessary information"""
+  pass
 
 class RECORDS(object):
   # pylint: disable=too-few-public-methods
@@ -35,57 +33,39 @@ class RECORDS(object):
   RELEASE = "release"
   TEST_BUILT = "test_rpm_built"
 
-def getCPU():
-  """Helper to extract CPU count and type from /proc/cpuinfo"""
+def extractCpuInfo(lines):
+  """Extract information from /proc/cpuinfo file"""
   expr = re.compile('^model name[\t ]+: +(.+)$')
   count = 0
   cputype = "unknown"
-  try:
-    with open('/proc/cpuinfo') as cpuinfo_file:
-      for line in cpuinfo_file.readlines():
-        match = expr.search(line)
-        if match != None:
-          count += 1
-          cputype = match.groups()[0]
-    return "%s x %s" % (count, cputype)
-  except IOError:
-    return None
 
-def getRAM():
-  """Helper to extract RAM size from /proc/meminfo"""
+  for line in lines:
+    match = expr.search(line)
+    if match:
+      count += 1
+      cputype = match.groups()[0]
+  return "%s x %s" % (count, cputype)
+
+def extractMemInfo(lines):
+  """Extract information from /proc/meminfo file"""
   size = 'unknown'
   expr = re.compile('^MemTotal: +([0-9]+) +kB$')
-  try:
-    with open('/proc/meminfo') as meminfo_file:
-      for line in meminfo_file.readlines():
-        match = expr.search(line)
-        if match != None:
-          size = int(match.groups()[0])/1024
-          break
-    return "%s MB" % size
-  except IOError:
-    return None
-
-def getHDD():
-  """Helper to parse size of disks from `df` output"""
-  size = 0.0
-  cmd = ['df', '-k', '-P', '--local', '--exclude-type=tmpfs']
-  try:
-    import subprocess
-    output = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    output = output.split('\n')
-  except ImportError:
-    output = os.popen("".join(cmd))
-    output = output.readlines()
-  expr = re.compile('^(/[^ ]+) +([0-9]+) +[0-9]+ +[0-9]+ +[0-9]+% +[^ ]+$')
-  for line in output:
+  for line in lines:
     match = expr.search(line)
-    if match != None:
+    if match:
+      size = int(match.groups()[0])/1024
+      break
+  return "%s MB" % size
+
+def extractHddInfo(lines):
+  """Extract information from df command"""
+  size = 0.0
+  expr = re.compile('^(/[^ ]+) +([0-9]+) +[0-9]+ +[0-9]+ +[0-9]+% +[^ ]+$')
+  for line in lines:
+    match = expr.search(line)
+    if match:
       size = size + float(match.groups()[1])/1024/1024
-  if size == 0:
-    return None
-  else:
-    return "%.1f GB" % size
+  return ("%.1f GB" % size) if size else None
 
 class EnvironmentProbe(object):
   """A class responsible for extracting information about test run environment from the system"""
@@ -97,10 +77,48 @@ class EnvironmentProbe(object):
   EV_PACKAGE = "PACKAGE"
   EV_TEST_VERSION = "testversion"
   EV_PACKAGE_NAME = "packagename"
+  DEFAULT_CPUINFO = "/proc/cpuinfo"
+  DEFAULT_MEMINFO = "/proc/meminfo"
+  DEFAULT_DF = ('df', '-k', '-P', '--local', '--exclude-type=tmpfs')
 
-  def __init__(self):
-    self.rpm = rpm if rpm else None
-    self.environment = None
+  def __init__(self, rpm=None, fqdn=socket.getfqdn, cpuinfo=DEFAULT_CPUINFO, meminfo=DEFAULT_MEMINFO, df=DEFAULT_DF):
+    self.rpm = rpm.ts() if rpm else None
+    self.getfqdn = fqdn
+    self.cpuinfo = cpuinfo
+    self.meminfo = meminfo
+    self.df_command = df
+    self.environment = {}
+
+  def getCPU(self):
+    """Helper to extract CPU count and type from /proc/cpuinfo"""
+    try:
+      with open(self.cpuinfo) as cpuinfo_file:
+        return extractCpuInfo(cpuinfo_file.readlines())
+    except IOError:
+      return None
+
+  def getRAM(self):
+    """Helper to extract RAM size from /proc/meminfo"""
+    try:
+      with open(self.meminfo) as meminfo_file:
+        return extractMemInfo(meminfo_file.readlines())
+    except IOError:
+      return None
+
+  def getHDD(self):
+    """Helper to parse size of disks from `df` output"""
+    try:
+      try:
+        import subprocess
+        output = subprocess.Popen(self.df_command, stdout=subprocess.PIPE).communicate()[0]
+        output = output.split('\n')
+      except ImportError:
+        output = os.popen("".join(self.df_command))
+        output = output.readlines()
+    except OSError:
+      return None
+
+    return extractHddInfo(output)
 
   def collectEnvironmentVariables(self):
     """Collect interesting environment variable values"""
@@ -111,6 +129,8 @@ class EnvironmentProbe(object):
   def collectRPMVersion(self, package):
     """Determines a N-V-R for installed packages. Returns None if package is not installed"""
     # pylint: disable=no-member
+    if not self.rpm:
+      raise EnvironmentProbeError("RPM not supported on this system")
     found = self.rpm.dbMatch("name", package) if self.rpm else None
     return "%(name)s-%(version)s-%(release)s" % found.next() if found else None
 
@@ -127,21 +147,25 @@ class EnvironmentProbe(object):
 
   def collectHostInfo(self):
     """Collect information about a test run host"""
-    self.environment[RECORDS.HOSTNAME] = socket.getfqdn()
+    self.environment[RECORDS.HOSTNAME] = self.getfqdn()
     self.environment[RECORDS.ARCH] = os.uname()[-1]
-    self.environment[RECORDS.CPU] = getCPU()
-    self.environment[RECORDS.RAM] = getRAM()
-    self.environment[RECORDS.HDD] = getHDD()
+
+    self.environment[RECORDS.CPU] = self.getCPU()
+    self.environment[RECORDS.RAM] = self.getRAM()
+    self.environment[RECORDS.HDD] = self.getHDD()
 
     try:
       with open("/etc/redhat-release", "r") as release_file:
         self.environment[RECORDS.RELEASE] = release_file.read().strip()
     except IOError:
-      self.environment[RECORDS.RELEASE] = None
+      pass
 
   def getTestRpmBuilt(self):
     """Determines date/time when a test RPM was built. The test RPM name is passed to the test in 'packagename'
        environmental variable"""
+    if self.rpm is None:
+      raise EnvironmentProbeError("RPM is not supported on this system")
+
     package = os.environ.get(EnvironmentProbe.EV_PACKAGE_NAME, None)
     if not package:
       return None
@@ -151,7 +175,7 @@ class EnvironmentProbe(object):
     if not testinfo:
       return None
 
-    buildtime = time.gmtime(int(testinfo.next().format("%({BUILDTIME}")))
+    buildtime = time.gmtime(int(testinfo.next().format("%(BUILDTIME)")))
     return time.strftime(EnvironmentProbe.TIMEFORMAT, buildtime)
 
   def collectMiscellaneous(self):
@@ -172,5 +196,9 @@ class EnvironmentProbe(object):
 
 def createEmptyJournal():
   """Creates a new empty journal, with environment collected from the host"""
-  probe = EnvironmentProbe()
+  try:
+    import rpm
+    probe = EnvironmentProbe(rpm)
+  except ImportError:
+    probe = EnvironmentProbe()
   return Journal(probe.collect())
