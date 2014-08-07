@@ -4,6 +4,7 @@ python:
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get -qq install python2.7-rpm
+  - sudo apt-get -qq install python-coverage
 install: "pip install pylint"
 virtualenv:
     system_site_packages: true
