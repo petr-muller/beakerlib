@@ -7,4 +7,4 @@ before_install:
 install: "pip install pylint"
 virtualenv:
     system_site_packages: true
-script: nosetests && pylint --rcfile=.pylintrc src/python/journalling.py && pylint --rcfile=.pylintrc src/python/bl_journal
+script: make python-check
