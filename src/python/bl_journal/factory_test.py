@@ -6,6 +6,8 @@ Created on Aug 5, 2014
 import os
 from bl_journal.factory import EnvironmentProbe, RECORDS, EnvironmentProbeError, extractCpuInfo, extractMemInfo,\
   extractHddInfo
+import time
+import calendar
 
 def test_getCPU():
   """Tests correct usage of /proc/cpuinfo file"""
@@ -178,7 +180,7 @@ def test_getTestRpmBuilt():
   rpm.packages["package"] = {"BUILDTIME": "1403632922"}
   os.environ[EnvironmentProbe.EV_PACKAGE_NAME] = "package"
   environment = EnvironmentProbe(rpm)
-  assert environment.getTestRpmBuilt() == '2014-06-24 18:02:02 CET'
+  assert calendar.timegm(time.strptime(environment.getTestRpmBuilt(), EnvironmentProbe.TIMEFORMAT)) == 1403632922
 
   os.environ[EnvironmentProbe.EV_PACKAGE_NAME] = "no-such-stuff"
   assert environment.getTestRpmBuilt() is None
