@@ -47,6 +47,6 @@ check:
 	make -C src test AREA=$(AREA)
 
 python-check:
+	cd src/python/bl_journal/; nosetests --with-coverage
 	pylint --rcfile=.pylintrc src/python/journalling.py
 	pylint --rcfile=.pylintrc src/python/bl_journal
-	cd src/python/bl_journal/; nosetests --with-coverage

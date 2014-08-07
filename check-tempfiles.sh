@@ -2,7 +2,7 @@
 
 OUTPUT=$( mktemp ) # no-reboot
 
-find . -type f | grep -v -e runtest.sh -e check-tempfiles.sh -e '.git' -e '\.swp' -e 'src/test' -e '\.pyc' | \
+find . -type f | grep -v -e runtest.sh -e check-tempfiles.sh -e '.git' -e '\.swp' -e 'src/test' -e '\.pyc' -e src/python/bl_journal/*_test.py | \
   xargs grep -e mktemp -e mkstemp -e '/tmp/' | \
   grep -v -e "# no-reboot" -e "__INTERNAL_PERSISTENT_TMP" &> $OUTPUT
 
