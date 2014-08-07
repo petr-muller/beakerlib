@@ -194,11 +194,11 @@ class EnvironmentProbe(object):
 
     return self.environment
 
-def createEmptyJournal():
+def createEmptyJournal(test):
   """Creates a new empty journal, with environment collected from the host"""
   try:
     import rpm
     probe = EnvironmentProbe(rpm)
   except ImportError:
     probe = EnvironmentProbe()
-  return Journal(probe.collect())
+  return Journal(test, probe.collect())

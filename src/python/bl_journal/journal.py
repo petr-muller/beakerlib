@@ -8,5 +8,6 @@ class Journal(object):
   """An object representing the journal"""
   # pylint: disable=too-few-public-methods
 
-  def __init__(self, environment):
+  def __init__(self, test, environment):
     self.environment = environment
+    self.test = test

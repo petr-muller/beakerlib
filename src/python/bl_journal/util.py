@@ -10,4 +10,4 @@ class JournalException(Exception):
 
 def getJournalFilename():
   """Returns a name of the bl_journal file, to be placed into BEAKERLIB_DIR"""
-  return "bl_journal.xml"
+  return "journal.xml"

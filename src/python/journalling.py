@@ -18,7 +18,6 @@ To be used mainly in BeakerLib tests.eclipse
 
 import sys
 import os
-from bl_journal import command
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
@@ -44,12 +43,95 @@ class CLIError(Exception):
   def __unicode__(self):
     return self.msg
 
-def initialize(test):
+def initialize(args):
   '''Process an 'initialize' command'''
-  if test is None:
-    raise CLIError("Command 'init' needs a --test option")
   to_execute = getCommand("init")
-  to_execute(os.environ["BEAKERLIB_DIR"])
+  to_execute(args.test, os.environ["BEAKERLIB_DIR"])
+
+def dump(args):
+  """Process a 'dump' command"""
+  to_execute = getCommand("dump")
+  to_execute(args.type)
+
+def log(args):
+  """Process a log command"""
+  to_execute = getCommand("log")
+  to_execute(args.message, args.severity)
+
+def add_phase(args):
+  """Process a command to add a phase"""
+  to_execute = getCommand("addphase")
+  args = args
+  to_execute()
+
+def finish_phase(args):
+  """Process a command to finish a phase"""
+  to_execute = getCommand("finphase")
+  args = args
+  to_execute()
+
+def print_log(args):
+  """Process a command to add new log to a journal"""
+  to_execute = getCommand("printlog")
+  args = args
+  to_execute()
+
+def add_test(args):
+  """Process a command to add new test record to a journal"""
+  to_execute = getCommand("test")
+  args = args
+  to_execute()
+
+def add_init_command(subparsers):
+  """Create a parser of a 'init' subcommand"""
+  init_parser = subparsers.add_parser("init")
+  init_parser.add_argument("--test", dest="test", help="A test for which the journal is initialized")
+  init_parser.set_defaults(func=initialize)
+
+def add_log_command(subparsers):
+  """Create a parser of a 'log' subcommand"""
+  log_parser = subparsers.add_parser("log")
+  log_parser.add_argument("--message", dest="message", help="Message to log")
+  log_parser.add_argument("--severity", dest="severity", choices=("WARNING", "LOG", "DEBUG", "INFO"),
+                          help="Severity of the message")
+  log_parser.set_defaults(func=log)
+
+def add_dump_command(subparsers):
+  """Create a parser for a 'dump' subcommand"""
+  dump_parser = subparsers.add_parser("dump")
+  dump_parser.add_argument("--type", default="raw", dest="type", choices=("pretty", "raw"),
+                           help="Sets how the XML is emitted")
+  dump_parser.set_defaults(func=dump)
+
+def add_addphase_command(subparsers):
+  """Create a parser for a 'addphase' subcommand"""
+  addphase_parser = subparsers.add_parser("addphase")
+  addphase_parser.add_argument("--name", required=True, dest="name",
+                               help="A title of the phase")
+  addphase_parser.add_argument("--type", required=True, dest="type", choices=("FAIL", "WARN"),
+                               help="A result this phase should give if any enclosed assertion fails")
+  addphase_parser.set_defaults(func=add_phase)
+
+def add_finphase_command(subparsers):
+  """Create a parser for a 'finphase' subcommand"""
+  finphase_parser = subparsers.add_parser("finphase")
+  finphase_parser.set_defaults(func=finish_phase)
+
+def add_printlog_command(subparsers):
+  """Create a parser for a 'printlog' subcommand"""
+  printlog_parser = subparsers.add_parser("printlog")
+  printlog_parser.add_argument("--severity", dest="severity", choices=("INFO", "DEBUG", "WARNING", "ERROR", "FATAL"),
+                               help="A threshold severity for messages. Messages with lower severity won't be printed.")
+  printlog_parser.set_defaults(func=print_log)
+
+def add_test_command(subparsers):
+  """Create a parser for a 'test' subcommand"""
+  test_parser = subparsers.add_parser("test")
+  test_parser.add_argument("--message", required=True, dest="message",
+                           help="A message to accompany the test")
+  test_parser.add_argument("--result", required=True, dest="result", choices=("PASS", "FAIL"),
+                           help="A result of the assertion")
+  test_parser.set_defaults(func=add_test)
 
 def main(argv=None):  # IGNORE:C0111
   '''Command line options.'''
@@ -74,14 +156,18 @@ USAGE
     # Setup argument parser
     parser = ArgumentParser(description=program_license,
                             formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=command.getSupportedCommands(),
-                        help="Initialize the bl_journal if it does not exist")
-    parser.add_argument("--test", dest="test",
-                        help="A test name related to this bl_journal action")
+    subparsers = parser.add_subparsers()
+    add_init_command(subparsers)
+    add_log_command(subparsers)
+    add_dump_command(subparsers)
+    add_finphase_command(subparsers)
+    add_addphase_command(subparsers)
+    add_printlog_command(subparsers)
+    add_test_command(subparsers)
+
     # Process arguments
     args = parser.parse_args()
-    if args.command == "init":
-      initialize(args.test)
+    args.func(args)
     return 0
   except KeyboardInterrupt:
     ### handle keyboard interrupt ###
