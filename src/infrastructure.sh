@@ -82,6 +82,7 @@ __INTERNAL_Mount(){
     local SERVER=$1
     local MNTPATH=$2
     local WHO=$3
+    local OPTIONS=$4
 
     if __INTERNAL_CheckMount "$MNTPATH"
     then
@@ -92,8 +93,13 @@ __INTERNAL_Mount(){
         rlLogInfo "$WHO creating directory $MNTPATH"
         mkdir -p "$MNTPATH"
     fi
-    rlLogInfo "$WHO mounting $SERVER on $MNTPATH"
-    mount "$SERVER" "$MNTPATH"
+    if [ -z "$OPTIONS" ] ; then
+        rlLogInfo "$WHO mounting $SERVER on $MNTPATH with default mount options"
+        mount "$SERVER" "$MNTPATH"
+    else
+        rlLogInfo "$WHO mounting $SERVER on $MNTPATH with custom mount options: $OPTIONS"
+        mount -o "$OPTIONS" "$SERVER" "$MNTPATH"
+    fi
     if [ $? -eq 0 ]
     then
         rlLogInfo "$WHO success"
@@ -157,7 +163,7 @@ EOF
 
 Create mount point (if neccessary) and mount a NFS share.
 
-    rlMount server share mountpoint
+    rlMount [-o MOUNT_OPTS] server share mountpoint
 
 =over
 
@@ -173,6 +179,10 @@ Shared directory name.
 
 Local mount point.
 
+=item MOUNT_OPTS
+
+Mount options.
+
 =back
 
 Returns 0 if mounting the share was successful.
@@ -180,10 +190,18 @@ Returns 0 if mounting the share was successful.
 =cut
 
 rlMount() {
+    local OPTIONS=''
+    local GETOPT=$(getopt -q -o o: -- "$@"); eval set -- "$GETOPT"
+    while true; do
+      case $1 in
+        --) shift; break; ;;
+        -o) shift; OPTIONS="$1"; ;;
+      esac ; shift;
+    done
     local SERVER=$1
     local REMDIR=$2
     local LOCDIR=$3
-    __INTERNAL_Mount "$SERVER:$REMDIR" "$LOCDIR" "[MOUNT $LOCDIR]"
+    __INTERNAL_Mount "$SERVER:$REMDIR" "$LOCDIR" "[MOUNT $LOCDIR]" "$OPTIONS"
     return $?
 }
 
@@ -438,7 +456,10 @@ Create a backup of files or directories (recursive). Can be used
 multiple times to add more files to backup. Backing up an already
 backed up file overwrites the original backup.
 
-    rlFileBackup [--clean] [--namespace name] file [file...]
+    rlFileBackup [--clean] [--namespace name] [--missing-ok|--no-missing-ok] file [file...]
+
+You can use C<rlRun> for asserting the result but keep in mind meaning of exit codes,
+especialy exit code 8, if using without --clean option.
 
 =over
 
@@ -447,11 +468,22 @@ backed up file overwrites the original backup.
 If this option is provided (have to be first option of the command),
 then file/dir backuped using this command (provided in next
 options) will be (recursively) removed before we will restore it.
+This option implies --missing-ok, this can be overridden by --no-missing-ok. 
 
 =item --namespace name
 
 Specifies the namespace to use.
 Namespaces can be used to separate backups and their restoration.
+
+=item --missing-ok
+
+Do not raise an error in case of missing file to backup.
+
+=item --no-missing-ok
+
+Do raise an error in case of missing file to backup.
+This is useful with --clean. This behaviour can be globally
+set by global variable BEAKERLIB_FILEBACKUP_MISSING_OK=false.
 
 =item file
 
@@ -460,15 +492,24 @@ Files and/or directories to be backed up.
 =back
 
 Returns 0 if the backup was successful.
+Returns 1 if parsing of parameters was not successful.
+Returns 2 if no files specification was provided.
+Returns 3 if BEAKERLIB_DIR variable is not set, e.g. rlJournalStart was not executed.
+Returns 4 if creating of main backup destination directories was not successful.
+Returns 5 if creating of file specific backup destination directories was not successful.
+Returns 6 if the copy of backed up files was not successful.
+Returns 7 if attributes of backedup files were not successfuly copied.
+Returns 8 if backed up files does not exist. This can be suppressed based on other options.
+
 
 =head4 Example with --clean:
 
     touch cleandir/aaa
-    rlFileBackup --clean cleandir/
+    rlRun "rlFileBackup --clean cleandir/"
     touch cleandir/bbb
     ls cleandir/
     aaa   bbb
-    rlFileRestore
+    rlRun "rlFileRestore"
     ls cleandir/
     aaa
 
@@ -524,22 +565,26 @@ __INTERNAL_FILEBACKUP_CLEAN_PATHS() {
 }
 
 rlFileBackup() {
-    local backup status file path dir failed selinux acl
+    local backup status file path dir failed selinux acl missing_ok="$BEAKERLIB_FILEBACKUP_MISSING_OK"
 
     local OPTS clean="" namespace=""
 
     # getopt will cut off first long opt when no short are defined
-    OPTS=$(getopt -o "cn:" -l "clean,namespace:" -- "$@")
+    OPTS=$(getopt -o "." -l "clean,namespace:,no-missing-ok,missing-ok" -- "$@")
     [ $? -ne 0 ] && return 1
 
     eval set -- "$OPTS"
     while true; do
         case "$1" in
-            '--clean') shift; clean=1 ;;
-            '--namespace') shift; namespace="$1"; shift ;;
+            '--clean') clean=1; missing_ok="${missing_ok:-true}"; ;;
+            '--missing-ok') missing_ok="true"; ;;
+            '--no-missing-ok') missing_ok="false"; ;;
+            '--namespace') shift; namespace="$1"; ;;
             --) shift; break ;;
         esac
+        shift
     done;
+    missing_ok="${missing_ok:-false}"
 
     # check parameter sanity
     if [ -z "$1" ]; then
@@ -564,6 +609,7 @@ rlFileBackup() {
 
     # backup dir to use, append namespace if defined
     backup="$BEAKERLIB_DIR/backup${namespace:+-$namespace}"
+    rlLogInfo "using '$backup' as backup destination"
 
     # create backup dir (unless it already exists)
     if [ -d "$backup" ]; then
@@ -600,13 +646,15 @@ rlFileBackup() {
         file="$(echo "$file" | sed "s|^\([^/]\)|$PWD/\1|" | sed 's|/$||')"
         # follow symlinks in parent dir
         path="$(dirname "$file")"
-        path="$(readlink -n -f "$path")"
+        path="$(readlink -n -m "$path")"
         file="$path/$(basename "$file")"
 
         # bail out if the file does not exist
         if ! [ -e "$file" ]; then
-            rlLogError "rlFileBackup: File $file does not exist."
-            status=8
+            $missing_ok || {
+              rlLogError "rlFileBackup: File $file does not exist."
+              status=8
+            }
             continue
         fi
 
@@ -669,6 +717,8 @@ or see C<--clean> option of C<rlFileBackup>.
 
     rlFileRestore [--namespace name]
 
+You can use C<rlRun> for asserting the result.
+
 =over
 
 =item --namespace name
@@ -720,7 +770,7 @@ rlFileRestore() {
     done
 
     # restore the files
-    if cp -fa "$backup"/* /
+    if [[ -n "$(ls -A "$backup")" ]] && cp -fa "$backup"/* /
     then
       rlLogDebug "rlFileRestore: Restoring files from $backup successful"
     else

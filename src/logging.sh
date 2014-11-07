@@ -600,6 +600,12 @@ rlGetPrimaryArch() {
                 ;;
             esac
         ;;
+        aarch64)
+            retval='aarch64'
+        ;;
+        ppc64le)
+            retval='ppc64le'
+        ;;
         *)
             rlLogError "rlGetPrimaryArch: Do not know what the arch is ('$(uname -a)')."
             retval=''
@@ -676,6 +682,12 @@ rlGetSecondaryArch() {
                     retval=''
                 ;;
             esac
+        ;;
+        aarch64)
+            retval=''
+        ;;
+        ppc64le)
+            retval=''
         ;;
         *)
             rlLogError "rlGetSecondaryArch: Do not know what the arch is ('$(uname -a)')."
