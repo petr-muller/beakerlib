@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/libica/Sanity/run-icastats"
+ tests="2"
+ failures="1"
+ errors="1"
+ hostname="some-p8-lp7.hostname.com"
+ id="25815323"
+ package="libica"
+ >
+ <properties>
+  <property name="pkgnotinstalled" value="libica" />
+  <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7" />
+  <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7" />
+  <property name="starttime" value="2014-11-07 08:12:23 EST" />
+  <property name="endtime" value="2014-11-07 08:12:25 EST" />
+  <property name="release" value="Red Head Enterprise Limux Server release X.Y Epsilon (Moo)" />
+  <property name="arch" value="zx_spectrum" />
+  <property name="hw_cpu" value="0 x unknown" />
+  <property name="hw_ram" value="17846 MB" />
+  <property name="hw_hdd" value="290.8 GB" />
+  <property name="purpose" value="PURPOSE of /CoreOS/libica/Sanity/run-icastats&#10;Description: runs icastats&#10;Author: Joe the Tester &lt;jttesterk@redhat.com&gt;&#10;" />
+ </properties>
+ <testcase name="Setup" assertions="1">
+  <error message="Checking for the presence of libica rpm" />
+ </testcase>
+ <testcase name="Test" assertions="1">
+  <failure message="icastats exits with 0 (Expected 0, got 127)" />
+ </testcase>
+</testsuite>

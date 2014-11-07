@@ -1,0 +1,31 @@
+<?xml version="1.0" ?><BEAKER_TEST><test_id>25815348</test_id><package>distribution</package><pkgnotinstalled>distribution</pkgnotinstalled><beakerlib_rpm>beakerlib-1.9-3.el7 </beakerlib_rpm><beakerlib_redhat_rpm>beakerlib-redhat-1-15.el7 </beakerlib_redhat_rpm><starttime>2014-11-07 08:27:22 EST</starttime><endtime>2014-11-07 08:27:27 EST</endtime><testname>/CoreOS/distribution/manpages/smoke</testname><release>Red Head Enterprise Limux X.Y (Moo)</release><hostname>some-p8-lp7-hostname.com</hostname><arch>zx_spectrum</arch><hw_cpu>0 x unknown</hw_cpu><hw_ram>17846 MB</hw_ram><hw_hdd>290.8 GB</hw_hdd><purpose>PURPOSE of /CoreOS/distribution/Manpages/smoke
+Description: Makes sure man finds and displays manpages
+Author: Joe the Tester &lt;jttester@redhat.com&gt;
+
+Test checks that man pages are readable by calling &quot;man man&quot; filtering escape
+codes from it's output and searching for expected strings using &quot;grep -E&quot;.
+Additional man pages to check, as well as RegEx with expected strings, can be
+specified via parametrization.
+
+For up to date parameters look inside runtest.sh!
+
+To specify additional man pages to check define for example:
+    CHECK_MAN_PAGES='bash less'
+
+Manpages can be automatically looked for by specifying list of rpm packages: 
+    CHECK_MAN_RPMS='coreutils less'
+
+Manpages can be also be sought for inside filesystem paths:
+    CHECK_MAN_ROOTS='/opt/rh/nodejs010/ /usr/local/share'
+
+If your man pages do not contain default strings use for example:
+    CHECK_FOR='NonStandardText|NAME|DESCRIPTION'
+
+For people testing just single collection package
+-------------------------------------------------
+To make sure only single one collection is enabled and avoid situation where
+other collection could cover, possibly corrupted MANPATH, in a collection under
+test, it is suggested to define:
+    ADD_STEPS='single_collection'
+
+</purpose><log><phase endtime="2014-11-07 08:27:24 EST" name="Setup" result="WARN" score="1" starttime="2014-11-07 08:27:22 EST" type="WARN"><pkgnotinstalled>man</pkgnotinstalled><test message="Checking for the presence of man rpm ">FAIL</test><pkgdetails sourcerpm="util-linux-2.23.2-19.ael7a.src.rpm">util-linux-2.23.2-19.ael7a.zx_spectrum </pkgdetails><test message="Checking for the presence of util-linux rpm ">PASS</test><message severity="LOG">Package versions:</message><message severity="LOG">  util-linux-2.23.2-19.ael7a.zx_spectrum</message><test command="TmpDir=$(mktemp -d)" message="Creating tmp directory (Expected 0, got 0)">PASS</test><test command="pushd /tmp/tmp.DNbQK2meJg" message="Command 'pushd /tmp/tmp.DNbQK2meJg' (Expected 0, got 0)">PASS</test></phase><phase endtime="2014-11-07 08:27:25 EST" name="Test" result="PASS" score="0" starttime="2014-11-07 08:27:25 EST" type="FAIL"><pkgnotinstalled>man</pkgnotinstalled><pkgdetails sourcerpm="util-linux-2.23.2-19.ael7a.src.rpm">util-linux-2.23.2-19.ael7a.zx_spectrum </pkgdetails><message severity="INFO">Main manpage sanity:</message><test command="man man | col -bx | grep -E 'NAME|SYNOPSIS|DESCRIPTION|AUTHOR'" message="Calling &quot;man man&quot; should display manpage (Expected 0, got 0)">PASS</test></phase><phase endtime="2014-11-07 08:27:27 EST" name="Cleanup" result="PASS" score="0" starttime="2014-11-07 08:27:27 EST" type="WARN"><pkgnotinstalled>man</pkgnotinstalled><pkgdetails sourcerpm="util-linux-2.23.2-19.ael7a.src.rpm">util-linux-2.23.2-19.ael7a.zx_spectrum </pkgdetails><test command="popd" message="Command 'popd' (Expected 0, got 0)">PASS</test><test command="rm -r /tmp/tmp.DNbQK2meJg" message="Removing tmp directory (Expected 0, got 0)">PASS</test></phase></log></BEAKER_TEST>

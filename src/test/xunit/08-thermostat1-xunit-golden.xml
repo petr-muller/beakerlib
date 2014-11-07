@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/thermostat1/Sanity/smoke" tests="3" failures="5" errors="1" hostname="some-p8-lp7-hostname.com" id="25815367" package="thermostat1">
+  <properties>
+    <property name="pkgnotinstalled" value="thermostat1"/>
+    <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7 "/>
+    <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7 "/>
+    <property name="starttime" value="2014-11-07 08:35:07 EST"/>
+    <property name="endtime" value="2014-11-07 08:36:18 EST"/>
+    <property name="release" value="Red Head Enterprise Limux X.Y (Moo)"/>
+    <property name="arch" value="zx_spectrum"/>
+    <property name="hw_cpu" value="0 x unknown"/>
+    <property name="hw_ram" value="17846 MB"/>
+    <property name="hw_hdd" value="290.8 GB"/>
+    <property name="purpose" value="PURPOSE of /CoreOS/thermostat1/Sanity/smoke&#10;Description: runs simple smoke test&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;&#10;Basic sanity test:&#10;1) run thermostat service&#10;2) ping agent&#10;&#10;No other service can run, no changes to default configuration are expected&#10;&#10;list-vms and ping are done via external scripts to avoid bash escaping&#10;"/>
+  </properties>
+  <testcase name="Setup" assertions="4">
+    <error message="Checking for the presence of thermostat1 rpm "/>
+  </testcase>
+  <testcase name="Test" assertions="8">
+    <failure message="Command 'thermostat --version' (Expected 0, got 127)"/>
+    <failure message="Command 'rlWatchdog &quot;while ! lsof -i -P | grep 12000; do sleep 4; done &quot; 60' (Expected 0, got 1)"/>
+    <failure message="Command 'grep 'Queuing ping' t-ping.log' (Expected 0, got 1)"/>
+    <failure message="Command 'grep 'Response received' t-ping.log' (Expected 0, got 1)"/>
+    <failure message="Command 'kill ' (Expected 0, got 1)"/>
+  </testcase>
+  <testcase name="Cleanup" assertions="2"/>
+</testsuite>
