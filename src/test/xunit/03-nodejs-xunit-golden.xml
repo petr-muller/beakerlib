@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/nodejs/Sanity/smoke" tests="3" failures="5" errors="2" hostname="some-p8-lp7-hostname.com" id="25815345" package="nodejs">
+  <properties>
+    <property name="pkgnotinstalled" value="nodejs"/>
+    <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7 "/>
+    <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7 "/>
+    <property name="starttime" value="2014-11-07 08:25:53 EST"/>
+    <property name="endtime" value="2014-11-07 08:26:10 EST"/>
+    <property name="release" value="Red Head Enterprise Limux X.Y (Moo)"/>
+    <property name="arch" value="zx_spectrum"/>
+    <property name="hw_cpu" value="0 x unknown"/>
+    <property name="hw_ram" value="17846 MB"/>
+    <property name="hw_hdd" value="290.8 GB"/>
+    <property name="purpose" value="PURPOSE of /CoreOS/nodejs/Sanity/smoke&#10;Description: Basic sanity smoke test&#10;Author: Joe the Tester &lt;jttesterk@redhat.com&gt;&#10;&#10;Test finds free port from a given port range and then starts a minimal node.js&#10;http server. Server is queried for the expected response. After stopping the&#10;server it's output is searched for messages confirming successful start as well&#10;as successful response to a query.&#10;"/>
+  </properties>
+  <testcase name="Setup" assertions="6">
+    <error message="Checking for the presence of nodejs rpm "/>
+    <error message="Binary 'node' should belong to: nodejs "/>
+  </testcase>
+  <testcase name="Test" assertions="9">
+    <failure message="Querying server (Expected 0, got 7)"/>
+    <failure message="Response should contain &quot;Hello World&quot; (Expected 0, got 1)"/>
+    <failure message="Stopping the server (Expected 0, got 1)"/>
+    <failure message="Output should contain &quot;Request received.&quot; (Expected 0, got 1)"/>
+    <failure message="Output should contain &quot;Server has started.&quot; (Expected 0, got 1)"/>
+  </testcase>
+  <testcase name="Cleanup" assertions="2"/>
+</testsuite>

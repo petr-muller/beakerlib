@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/icedtea-web/Regression/packEnabled-works-for-applet" tests="3" failures="1" errors="0" hostname="some-p8-lp7-hostname.com" id="25815334" package="icedtea-web">
+  <properties>
+    <property name="pkgdetails" value="icedtea-web-1.5.1-3.ael7a.zx_spectrum "/>
+    <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7 "/>
+    <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7 "/>
+    <property name="starttime" value="2014-11-07 08:20:37 EST"/>
+    <property name="endtime" value="2014-11-07 08:22:56 EST"/>
+    <property name="release" value="Red Head Enterprise Limux X.Y (Moo)"/>
+    <property name="arch" value="zx_spectrum"/>
+    <property name="hw_cpu" value="0 x unknown"/>
+    <property name="hw_ram" value="17846 MB"/>
+    <property name="hw_hdd" value="290.8 GB"/>
+    <property name="purpose" value="PURPOSE of /CoreOS/icedtea-web/Regression/packEnabled-works-for-applet&#10;Description: Tests load an applet, for which the bug was reported. When the applet is loaded, the test PASSes, it FAILs when applet could not be loaded.For the applet to be loaded the httpd daemon is required.&#10;Author: Joe the Tester &lt;jttesterk@redhat.com&gt;&#10;"/>
+  </properties>
+  <testcase name="Setup" assertions="11"/>
+  <testcase name="Load FF with applet" assertions="4">
+    <failure message="File 'firefox.out' should contain 'Applet started' "/>
+  </testcase>
+  <testcase name="Cleanup" assertions="6"/>
+</testsuite>

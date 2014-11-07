@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/thermostat1/Sanity/thermostat-logging" tests="3" failures="5" errors="1" hostname="some-p8-lp7-hostname.com" id="25815359" package="thermostat1">
+  <properties>
+    <property name="pkgnotinstalled" value="thermostat1"/>
+    <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7 "/>
+    <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7 "/>
+    <property name="starttime" value="2014-11-07 08:32:26 EST"/>
+    <property name="endtime" value="2014-11-07 08:32:34 EST"/>
+    <property name="release" value="Red Head Enterprise Limux X.Y (Moo)"/>
+    <property name="arch" value="zx_spectrum"/>
+    <property name="hw_cpu" value="0 x unknown"/>
+    <property name="hw_ram" value="17846 MB"/>
+    <property name="hw_hdd" value="290.8 GB"/>
+    <property name="purpose" value="PURPOSE of /CoreOS/thermostat1/Sanity/thermostat-logging&#10;Description: The test sets logging level to FINEST and checks the logs.&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;"/>
+  </properties>
+  <testcase name="Setup" assertions="5">
+    <error message="Checking for the presence of thermostat1 rpm "/>
+  </testcase>
+  <testcase name="Test" assertions="8">
+    <failure message="Unsuccesful agent without storage (Expected 0, got 127)"/>
+    <failure message="File /root/.thermostat/logs/thermostat.log should exist "/>
+    <failure message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
+    <failure message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
+    <failure message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
+  </testcase>
+  <testcase name="Cleanup" assertions="2"/>
+</testsuite>

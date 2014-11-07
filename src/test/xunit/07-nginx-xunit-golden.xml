@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/nginx/Sanity/daemon-selinux-context" tests="3" failures="1" errors="6" hostname="some-p8-lp7-hostname.com" id="25815363" package="nginx">
+  <properties>
+    <property name="pkgnotinstalled" value="nginx"/>
+    <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7 "/>
+    <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7 "/>
+    <property name="starttime" value="2014-11-07 08:33:56 EST"/>
+    <property name="endtime" value="2014-11-07 08:34:03 EST"/>
+    <property name="release" value="Red Head Enterprise Limux X.Y (Moo)"/>
+    <property name="arch" value="zx_spectrum"/>
+    <property name="hw_cpu" value="0 x unknown"/>
+    <property name="hw_ram" value="17846 MB"/>
+    <property name="hw_hdd" value="290.8 GB"/>
+    <property name="purpose" value="PURPOSE of /CoreOS/nginx/Sanity/daemon-selinux-context&#10;Description: test selinux context of all squid's processes&#10;Every process with name &quot;nginx&quot; is checked.&#10;Parametrization takes nginx version from COLLECTIONS variable&#10;and if COLLECTIONS isn't set, system nginx is expected:&#10;(service will be for example: nginx14-nginx or just nginx)&#10;&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;"/>
+  </properties>
+  <testcase name="Setup" assertions="11">
+    <error message="Checking for the presence of nginx rpm "/>
+    <error message="checking nginx rpm (Expected 0, got 1)"/>
+    <error message="Library is unable to get document rootdir from configuration file: /etc/nginx/nginx.conf "/>
+    <error message="Checking for the presence of nginx rpm "/>
+    <error message="Command 'rlImport nginx/nginx' (Expected 0, got 1)"/>
+    <error message="Command 'rlServiceStart nginx' (Expected 0, got 1)"/>
+  </testcase>
+  <testcase name="Test" assertions="2">
+    <failure message="nginx has at least one running process (Expected 0, got 1)"/>
+  </testcase>
+  <testcase name="Cleanup" assertions="3"/>
+</testsuite>

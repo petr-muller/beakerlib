@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/libpng/Sanity/imagemagick-libpng" tests="3" failures="0" errors="0" hostname="some-p8-lp7-hostname.com" id="25815322" package="libpng">
+  <properties>
+    <property name="pkgdetails" value="libpng-1.5.13-5.ael7a.zx_spectrum "/>
+    <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7 "/>
+    <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7 "/>
+    <property name="starttime" value="2014-11-07 08:12:07 EST"/>
+    <property name="endtime" value="2014-11-07 08:12:12 EST"/>
+    <property name="release" value="Red Head Enterprise Limux X.Y (Moo)"/>
+    <property name="arch" value="zx_spectrum"/>
+    <property name="hw_cpu" value="0 x unknown"/>
+    <property name="hw_ram" value="17846 MB"/>
+    <property name="hw_hdd" value="290.8 GB"/>
+    <property name="purpose" value="PURPOSE of /CoreOS/libpng/Sanity/imagemagick-libpng&#10;Description: Tests basic functionality of libpng with ImageMagick&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;"/>
+  </properties>
+  <testcase name="Setup" assertions="4"/>
+  <testcase name="Test" assertions="4"/>
+  <testcase name="Cleanup" assertions="2"/>
+</testsuite>

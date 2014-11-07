@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="/CoreOS/libica/Sanity/run-icastats" orig1="testname"
+ tests="2"                                           orig2="phase count"
+ failures="1"                                        orig3="FAIL phase count"
+ errors="1"                                          orig4="WARN phase count"
+ time="TODO"                                         orig5="Not sure: END-START maybe?"
+ disabled="NOT USED"                                 orig6="Not used: no such stuff in BL"
+ skipped="NOT USED"                                  orig7="Not used: no such stuff in BL"
+ timestamp="TODO"                                    orig8="Not sure: END as timestamp?"
+ hostname="some-p8-lp7.hostname.com"                 orig9="hostname"
+ id="25815323"                                       origa="test_id"
+ package="libica"                                    origb="package"
+ >
+ <properties>
+  <property name="pkgnotinstalled" value="libica" /> <!-- Rest of the header elements -->
+  <property name="beakerlib_rpm" value="beakerlib-1.9-3.el7" />
+  <property name="beakerlib_redhat_rpm" value="beakerlib-redhat-1-15.el7" />
+  <property name="starttime" value="2014-11-07 08:12:23 EST" />
+  <property name="endtime" value="2014-11-07 08:12:25 EST" />
+  <property name="release" value="Red Head Enterprise Limux Server release X.Y Epsilon (Moo)" />
+  <property name="arch" value="zx_spectrum" />
+  <property name="hw_cpu" value="0 x unknown" />
+  <property name="hw_ram" value="17846 MB" />
+  <property name="hw_hdd" value="290.8 GB" />
+  <property name="purpose" value="PURPOSE of /CoreOS/libica/Sanity/run-icastats
+Description: runs icastats
+Author: Joe the Tester &lt;jttesterk@redhat.com&gt;" />
+ </properties>
+ <testcase name="Setup"                             orig1="phase name="
+  assertions="1"                                    orig2="Count: test tags"
+  time="TODO"                                       orig3="endtime-starttime"
+  classname="TODO"                                  orig4="Not sure what to map to this"
+  status="TODO">                                    orig5="Not sure what this means""
+  <error message="Checking for the presence of libica rpm" /> <!-- error for WARN phases -->
+ </testcase>
+ <testcase name="Test"
+  assertions="1"
+  time="TODO"
+  classname="TODO"
+  status="TODO">
+  <failure message="icastats exits with 0 (Expected 0, got 127)" />
+ </testcase>
+</testsuite>
