@@ -65,7 +65,6 @@ Run on the very beginning of your script to initialize journalling
 functionality.
 
 =cut
-
 rlJournalStart(){
     # test-specific temporary directory for journal/metadata
     if [ -n "$BEAKERLIB_DIR" ]; then
@@ -167,7 +166,10 @@ rlJournalEnd(){
     fi
     local journal="$BEAKERLIB_JOURNAL"
     local journaltext="$BEAKERLIB_DIR/journal.txt"
+    local journalxunit="$BEAKERLIB_DIR/xunit.xml"
+
     rlJournalPrintText > $journaltext
+    xsltproc "$BEAKERLIB/xunit.xsl" "$journal" > "$journalxunit"
 
     if [ -z "$BEAKERLIB_COMMAND_SUBMIT_LOG" ]
     then
@@ -177,11 +179,12 @@ rlJournalEnd(){
     if [ -n "$TESTID" ] ; then
         $BEAKERLIB_COMMAND_SUBMIT_LOG -T $TESTID -l $journal \
         || rlLogError "rlJournalEnd: Submit wasn't successful"
+        $BEAKERLIB_COMMAND_SUBMIT_LOG -T $TESTID -l $journalxunit
     else
-        rlLog "JOURNAL XML: $journal"
-        rlLog "JOURNAL TXT: $journaltext"
+        rlLog "JOURNAL XML:   $journal"
+        rlLog "JOURNAL TXT:   $journaltext"
+        rlLog "JOURNAL xUnit: $journalxunit"
     fi
-
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -387,6 +390,8 @@ rljClosePhase(){
     rlLogDebug "rljClosePhase: Phase $name closed"
     rlJournalPrintText > $logfile
     rlReport "$name" "$result" "$score" "$logfile"
+    xsltproc "$BEAKERLIB/xunit.xsl" "$BEAKERLIB_DIR/journal.xml" > "$BEAKERLIB_DIR/xunit.xml"
+    rlFileSubmit "$BEAKERLIB_DIR/xunit.xml" "xunit.xml"
 }
 
 rljAddTest(){

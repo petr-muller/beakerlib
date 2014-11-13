@@ -299,3 +299,90 @@ test_packageLoggingGuess() {
   assertTrue "rlJournalStart survives garbage in TEST" "rlJournalStart"
   assertFalse "No <pkgdetails> tag when TEST is garbage" "rlJournalPrint | grep -q '<pkgdetails>'"
 }
+
+CLEAR_XUNIT_TEST_STATE() {
+  XUNIT_TEST_SUBMITTED_FILES=""
+  XUNIT_TEST_SUBMITTED_FILE=""
+  XUNIT_TEST_VALID_XML=""
+  XUNIT_TEST_XUNIT_OK=""
+}
+
+UNSET_XUNIT_TEST_STATE() {
+  unset XUNIT_TEST_SUBMITTED_FILES
+  unset XUNIT_TEST_SUBMITTED_FILE
+  unset XUNIT_TEST_VALID_XML
+  unset XUNIT_TEST_XUNIT_OK
+}
+
+testsuite_submit_xunit() {
+  local SUBMITTED_FILE="$4"
+
+  if [ -z "$XUNIT_TEST_SUBMITTED_FILE" ]
+  then
+    XUNIT_TEST_SUBMITTED_FILE=yes
+  fi
+
+  if ! [ -f "$SUBMITTED_FILE" ]
+  then
+    XUNIT_TEST_SUBMITTED_FILE=no
+    return 1
+  else
+    XUNIT_TEST_SUBMITTED_FILES="$XUNIT_TEST_SUBMITTED_FILES:$SUBMITTED_FILE"
+  fi
+
+  if xmllint --noout $SUBMITTED_FILE
+  then
+    XUNIT_TEST_VALID_XML="$SUBMITTED_FILE"
+  else
+    return 1
+  fi
+
+  if grep -q '<testsuite name="weeee some garbage"' $SUBMITTED_FILE && \
+     grep -q '<properties>' $SUBMITTED_FILE && \
+     grep -q '<testcase name="Setup" assertions="1">' $SUBMITTED_FILE && \
+     grep -q '<error message="Nope ' $SUBMITTED_FILE
+  then
+    XUNIT_TEST_XUNIT_OK="$SUBMITTED_FILE"
+  fi
+}
+
+test_rlPhaseEnd_xUnit() {
+  export BEAKERLIB_COMMAND_SUBMIT_LOG=testsuite_submit_xunit
+  silentIfNotDebug 'journalReset'
+  silentIfNotDebug 'rlPhaseStartSetup'
+  silentIfNotDebug 'rlAssert0 "Nope" 1'
+
+  CLEAR_XUNIT_TEST_STATE
+  silentIfNotDebug 'rlPhaseEnd'
+
+  assertTrue "rlPhaseEnd submitted existing files: [$XUNIT_TEST_SUBMITTED_FILES]" "[ '$XUNIT_TEST_SUBMITTED_FILE' == 'yes' ]"
+  assertTrue "At least one of submitted files was valid XML: [$XUNIT_TEST_VALID_XML]" "[ -n '$XUNIT_TEST_VALID_XML' ]"
+  assertTrue "Valid XML looks like xUnit: [$XUNIT_TEST_XUNIT_OK]" "[ -n '$XUNIT_TEST_XUNIT_OK' ]"
+
+  UNSET_XUNIT_TEST_STATE
+  unset BEAKERLIB_COMMAND_SUBMIT_LOG
+}
+
+test_rlJournalEnd_xUnit() {
+  export BEAKERLIB_COMMAND_SUBMIT_LOG=testsuite_submit_xunit
+  silentIfNotDebug 'journalReset'
+  silentIfNotDebug 'rlPhaseStartSetup'
+  silentIfNotDebug 'rlAssert0 "Nope" 1'
+  silentIfNotDebug 'rlPhaseEnd'
+
+  CLEAR_XUNIT_TEST_STATE
+
+  silentIfNotDebug 'rlJournalEnd'
+
+  assertTrue "rlPhaseEnd submitted existing files: [$XUNIT_TEST_SUBMITTED_FILES]" "[ '$XUNIT_TEST_SUBMITTED_FILE' == 'yes' ]"
+  assertTrue "At least one of submitted files was valid XML: [$XUNIT_TEST_VALID_XML]" "[ -n '$XUNIT_TEST_VALID_XML' ]"
+  assertTrue "Valid XML looks like xUnit: [$XUNIT_TEST_XUNIT_OK]" "[ -n '$XUNIT_TEST_XUNIT_OK' ]"
+
+  UNSET_XUNIT_TEST_STATE
+  unset BEAKERLIB_COMMAND_SUBMIT_LOG
+
+  local TID_BACK=$TESTID
+  unset TESTID
+  assertTrue 'Without TESTID set, rlJournalEnd reports xUnit directly' 'rlJournalEnd 2>&1 | grep "JOURNAL xUnit: /"'
+  export TESTID=$TID_BACK
+}
