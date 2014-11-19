@@ -340,7 +340,7 @@ testsuite_submit_xunit() {
   if grep -q '<testsuite name="weeee some garbage"' $SUBMITTED_FILE && \
      grep -q '<properties>' $SUBMITTED_FILE && \
      grep -q '<testcase name="Setup" assertions="1">' $SUBMITTED_FILE && \
-     grep -q '<error message="Nope ' $SUBMITTED_FILE
+     grep -q '<failure message="Nope ' $SUBMITTED_FILE
   then
     XUNIT_TEST_XUNIT_OK="$SUBMITTED_FILE"
   fi

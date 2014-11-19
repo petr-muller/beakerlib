@@ -14,15 +14,15 @@
     <property name="purpose" value="PURPOSE of /CoreOS/nginx/Sanity/daemon-selinux-context&#10;Description: test selinux context of all squid's processes&#10;Every process with name &quot;nginx&quot; is checked.&#10;Parametrization takes nginx version from COLLECTIONS variable&#10;and if COLLECTIONS isn't set, system nginx is expected:&#10;(service will be for example: nginx14-nginx or just nginx)&#10;&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;"/>
   </properties>
   <testcase name="Setup" assertions="11">
-    <error message="Checking for the presence of nginx rpm "/>
-    <error message="checking nginx rpm (Expected 0, got 1)"/>
-    <error message="Library is unable to get document rootdir from configuration file: /etc/nginx/nginx.conf "/>
-    <error message="Checking for the presence of nginx rpm "/>
-    <error message="Command 'rlImport nginx/nginx' (Expected 0, got 1)"/>
-    <error message="Command 'rlServiceStart nginx' (Expected 0, got 1)"/>
+    <failure message="Checking for the presence of nginx rpm "/>
+    <failure message="checking nginx rpm (Expected 0, got 1)"/>
+    <failure message="Library is unable to get document rootdir from configuration file: /etc/nginx/nginx.conf "/>
+    <failure message="Checking for the presence of nginx rpm "/>
+    <failure message="Command 'rlImport nginx/nginx' (Expected 0, got 1)"/>
+    <failure message="Command 'rlServiceStart nginx' (Expected 0, got 1)"/>
   </testcase>
   <testcase name="Test" assertions="2">
-    <failure message="nginx has at least one running process (Expected 0, got 1)"/>
+    <error message="nginx has at least one running process (Expected 0, got 1)"/>
   </testcase>
   <testcase name="Cleanup" assertions="3"/>
 </testsuite>

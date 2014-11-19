@@ -31,13 +31,13 @@ Author: Joe the Tester &lt;jttesterk@redhat.com&gt;" />
   time="TODO"                                       orig3="endtime-starttime"
   classname="TODO"                                  orig4="Not sure what to map to this"
   status="TODO">                                    orig5="Not sure what this means""
-  <error message="Checking for the presence of libica rpm" /> <!-- error for WARN phases -->
+  <failure message="Checking for the presence of libica rpm" /> <!-- error for WARN phases -->
  </testcase>
  <testcase name="Test"
   assertions="1"
   time="TODO"
   classname="TODO"
   status="TODO">
-  <failure message="icastats exits with 0 (Expected 0, got 127)" />
+  <error message="icastats exits with 0 (Expected 0, got 127)" />
  </testcase>
 </testsuite>

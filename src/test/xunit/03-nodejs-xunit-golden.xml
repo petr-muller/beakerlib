@@ -14,15 +14,15 @@
     <property name="purpose" value="PURPOSE of /CoreOS/nodejs/Sanity/smoke&#10;Description: Basic sanity smoke test&#10;Author: Joe the Tester &lt;jttesterk@redhat.com&gt;&#10;&#10;Test finds free port from a given port range and then starts a minimal node.js&#10;http server. Server is queried for the expected response. After stopping the&#10;server it's output is searched for messages confirming successful start as well&#10;as successful response to a query.&#10;"/>
   </properties>
   <testcase name="Setup" assertions="6">
-    <error message="Checking for the presence of nodejs rpm "/>
-    <error message="Binary 'node' should belong to: nodejs "/>
+    <failure message="Checking for the presence of nodejs rpm "/>
+    <failure message="Binary 'node' should belong to: nodejs "/>
   </testcase>
   <testcase name="Test" assertions="9">
-    <failure message="Querying server (Expected 0, got 7)"/>
-    <failure message="Response should contain &quot;Hello World&quot; (Expected 0, got 1)"/>
-    <failure message="Stopping the server (Expected 0, got 1)"/>
-    <failure message="Output should contain &quot;Request received.&quot; (Expected 0, got 1)"/>
-    <failure message="Output should contain &quot;Server has started.&quot; (Expected 0, got 1)"/>
+    <error message="Querying server (Expected 0, got 7)"/>
+    <error message="Response should contain &quot;Hello World&quot; (Expected 0, got 1)"/>
+    <error message="Stopping the server (Expected 0, got 1)"/>
+    <error message="Output should contain &quot;Request received.&quot; (Expected 0, got 1)"/>
+    <error message="Output should contain &quot;Server has started.&quot; (Expected 0, got 1)"/>
   </testcase>
   <testcase name="Cleanup" assertions="2"/>
 </testsuite>

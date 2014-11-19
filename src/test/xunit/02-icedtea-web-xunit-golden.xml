@@ -15,7 +15,7 @@
   </properties>
   <testcase name="Setup" assertions="11"/>
   <testcase name="Load FF with applet" assertions="4">
-    <failure message="File 'firefox.out' should contain 'Applet started' "/>
+    <error message="File 'firefox.out' should contain 'Applet started' "/>
   </testcase>
   <testcase name="Cleanup" assertions="6"/>
 </testsuite>

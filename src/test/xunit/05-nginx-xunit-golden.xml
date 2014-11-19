@@ -14,30 +14,30 @@
     <property name="purpose" value="PURPOSE of /CoreOS/nginx/Sanity/nginx-sanity-test&#10;Description: Sanity test for nginx&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;"/>
   </properties>
   <testcase name="Setup" assertions="18">
-    <error message="Checking for the presence of nginx rpm "/>
-    <error message="checking nginx rpm (Expected 0, got 1)"/>
-    <error message="Library is unable to get document rootdir from configuration file: /etc/nginx/nginx.conf "/>
-    <error message="Checking for the presence of nginx rpm "/>
-    <error message="Command 'rlImport nginx/nginx' (Expected 0, got 1)"/>
-    <error message="Binary 'nginx' should belong to: nginx "/>
-    <error message="File /etc/nginx should exist "/>
-    <error message="File /var/log/nginx should exist "/>
-    <error message="Command 'mkdir /dev/null/rhts-nginx-root' (Expected 0, got 1)"/>
-    <error message="Command 'echo this is the index &gt; /dev/null/rhts-nginx-root/index.html' (Expected 0, got 1)"/>
-    <error message="Command 'echo '&lt;?php echo phpinfo();' &gt; /dev/null/rhts-nginx-root/info.php' (Expected 0, got 1)"/>
-    <error message="Command 'cp nginx.conf /etc/nginx/conf.d/rhts-nginx-sanity.conf' (Expected 0, got 1)"/>
-    <error message="Command 'sed -i 's|ROOTDIR|/dev/null|' /etc/nginx/conf.d/rhts-nginx-sanity.conf' (Expected 0, got 2)"/>
+    <failure message="Checking for the presence of nginx rpm "/>
+    <failure message="checking nginx rpm (Expected 0, got 1)"/>
+    <failure message="Library is unable to get document rootdir from configuration file: /etc/nginx/nginx.conf "/>
+    <failure message="Checking for the presence of nginx rpm "/>
+    <failure message="Command 'rlImport nginx/nginx' (Expected 0, got 1)"/>
+    <failure message="Binary 'nginx' should belong to: nginx "/>
+    <failure message="File /etc/nginx should exist "/>
+    <failure message="File /var/log/nginx should exist "/>
+    <failure message="Command 'mkdir /dev/null/rhts-nginx-root' (Expected 0, got 1)"/>
+    <failure message="Command 'echo this is the index &gt; /dev/null/rhts-nginx-root/index.html' (Expected 0, got 1)"/>
+    <failure message="Command 'echo '&lt;?php echo phpinfo();' &gt; /dev/null/rhts-nginx-root/info.php' (Expected 0, got 1)"/>
+    <failure message="Command 'cp nginx.conf /etc/nginx/conf.d/rhts-nginx-sanity.conf' (Expected 0, got 1)"/>
+    <failure message="Command 'sed -i 's|ROOTDIR|/dev/null|' /etc/nginx/conf.d/rhts-nginx-sanity.conf' (Expected 0, got 2)"/>
   </testcase>
   <testcase name="Test" assertions="12">
-    <failure message="Command 'rlServiceStart nginx' (Expected 0, got 1)"/>
-    <failure message="Command 'curl http://127.0.0.1:81/ &gt; output.html' (Expected 0, got 7)"/>
-    <failure message="rlAssertNotDiffer: file /dev/null/rhts-nginx-root/index.html was not found "/>
-    <failure message="Command 'curl http://127.0.0.1:81//rp/ &gt; output2.html' (Expected 0, got 7)"/>
-    <failure message="rlAssertNotDiffer: file /dev/null/rhts-nginx-root/index.html was not found "/>
-    <failure message="File /var/log/nginx/access.log should exist "/>
-    <failure message="File /var/log/nginx/error.log should exist "/>
-    <failure message="Command 'ab -c 100 -n 10000 http://127.0.0.1:81/' (Expected 0, got 111)"/>
-    <failure message="Command 'ab -c 100 -n 10000 http://127.0.0.1:81/rp/' (Expected 0, got 111)"/>
+    <error message="Command 'rlServiceStart nginx' (Expected 0, got 1)"/>
+    <error message="Command 'curl http://127.0.0.1:81/ &gt; output.html' (Expected 0, got 7)"/>
+    <error message="rlAssertNotDiffer: file /dev/null/rhts-nginx-root/index.html was not found "/>
+    <error message="Command 'curl http://127.0.0.1:81//rp/ &gt; output2.html' (Expected 0, got 7)"/>
+    <error message="rlAssertNotDiffer: file /dev/null/rhts-nginx-root/index.html was not found "/>
+    <error message="File /var/log/nginx/access.log should exist "/>
+    <error message="File /var/log/nginx/error.log should exist "/>
+    <error message="Command 'ab -c 100 -n 10000 http://127.0.0.1:81/' (Expected 0, got 111)"/>
+    <error message="Command 'ab -c 100 -n 10000 http://127.0.0.1:81/rp/' (Expected 0, got 111)"/>
   </testcase>
   <testcase name="Cleanup" assertions="4"/>
 </testsuite>
