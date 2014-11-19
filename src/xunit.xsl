@@ -27,6 +27,10 @@
     <property name="starttime" value="{/BEAKER_TEST/starttime}" />
   </xsl:template>
 
+  <xsl:template match="/BEAKER_TEST/pkgdetails">
+    <property name="pkgdetails" value="{/BEAKER_TEST/pkgdetails}" />
+  </xsl:template>
+
   <xsl:template match="/BEAKER_TEST/endtime">
     <property name="endtime" value="{/BEAKER_TEST/endtime}" />
   </xsl:template>
