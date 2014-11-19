@@ -14,7 +14,7 @@
     <property name="purpose" value="PURPOSE of /CoreOS/distribution/Manpages/smoke&#10;Description: Makes sure man finds and displays manpages&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;&#10;Test checks that man pages are readable by calling &quot;man man&quot; filtering escape&#10;codes from it's output and searching for expected strings using &quot;grep -E&quot;.&#10;Additional man pages to check, as well as RegEx with expected strings, can be&#10;specified via parametrization.&#10;&#10;For up to date parameters look inside runtest.sh!&#10;&#10;To specify additional man pages to check define for example:&#10;    CHECK_MAN_PAGES='bash less'&#10;&#10;Manpages can be automatically looked for by specifying list of rpm packages: &#10;    CHECK_MAN_RPMS='coreutils less'&#10;&#10;Manpages can be also be sought for inside filesystem paths:&#10;    CHECK_MAN_ROOTS='/opt/rh/nodejs010/ /usr/local/share'&#10;&#10;If your man pages do not contain default strings use for example:&#10;    CHECK_FOR='NonStandardText|NAME|DESCRIPTION'&#10;&#10;For people testing just single collection package&#10;-------------------------------------------------&#10;To make sure only single one collection is enabled and avoid situation where&#10;other collection could cover, possibly corrupted MANPATH, in a collection under&#10;test, it is suggested to define:&#10;    ADD_STEPS='single_collection'&#10;&#10;"/>
   </properties>
   <testcase name="Setup" assertions="4">
-    <error message="Checking for the presence of man rpm "/>
+    <failure message="Checking for the presence of man rpm "/>
   </testcase>
   <testcase name="Test" assertions="1"/>
   <testcase name="Cleanup" assertions="2"/>

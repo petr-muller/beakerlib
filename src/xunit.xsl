@@ -65,11 +65,11 @@
   </testcase>
   </xsl:template>
 
-  <xsl:template match="phase[@type = 'WARN']/test[text() = 'FAIL']">
+  <xsl:template match="phase[@type = 'FAIL']/test[text() = 'FAIL']">
     <error message="{@message}"></error>
   </xsl:template>
 
-  <xsl:template match="phase[@type = 'FAIL']/test[text() = 'FAIL']">
+  <xsl:template match="phase[@type = 'WARN']/test[text() = 'FAIL']">
     <failure message="{@message}"></failure>
   </xsl:template>
 

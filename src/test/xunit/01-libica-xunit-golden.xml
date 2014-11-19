@@ -21,9 +21,9 @@
   <property name="purpose" value="PURPOSE of /CoreOS/libica/Sanity/run-icastats&#10;Description: runs icastats&#10;Author: Joe the Tester &lt;jttesterk@redhat.com&gt;&#10;" />
  </properties>
  <testcase name="Setup" assertions="1">
-  <error message="Checking for the presence of libica rpm" />
+  <failure message="Checking for the presence of libica rpm" />
  </testcase>
  <testcase name="Test" assertions="1">
-  <failure message="icastats exits with 0 (Expected 0, got 127)" />
+  <error message="icastats exits with 0 (Expected 0, got 127)" />
  </testcase>
 </testsuite>

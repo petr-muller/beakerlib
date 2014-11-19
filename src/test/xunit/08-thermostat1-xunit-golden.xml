@@ -14,14 +14,14 @@
     <property name="purpose" value="PURPOSE of /CoreOS/thermostat1/Sanity/smoke&#10;Description: runs simple smoke test&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;&#10;Basic sanity test:&#10;1) run thermostat service&#10;2) ping agent&#10;&#10;No other service can run, no changes to default configuration are expected&#10;&#10;list-vms and ping are done via external scripts to avoid bash escaping&#10;"/>
   </properties>
   <testcase name="Setup" assertions="4">
-    <error message="Checking for the presence of thermostat1 rpm "/>
+    <failure message="Checking for the presence of thermostat1 rpm "/>
   </testcase>
   <testcase name="Test" assertions="8">
-    <failure message="Command 'thermostat --version' (Expected 0, got 127)"/>
-    <failure message="Command 'rlWatchdog &quot;while ! lsof -i -P | grep 12000; do sleep 4; done &quot; 60' (Expected 0, got 1)"/>
-    <failure message="Command 'grep 'Queuing ping' t-ping.log' (Expected 0, got 1)"/>
-    <failure message="Command 'grep 'Response received' t-ping.log' (Expected 0, got 1)"/>
-    <failure message="Command 'kill ' (Expected 0, got 1)"/>
+    <error message="Command 'thermostat --version' (Expected 0, got 127)"/>
+    <error message="Command 'rlWatchdog &quot;while ! lsof -i -P | grep 12000; do sleep 4; done &quot; 60' (Expected 0, got 1)"/>
+    <error message="Command 'grep 'Queuing ping' t-ping.log' (Expected 0, got 1)"/>
+    <error message="Command 'grep 'Response received' t-ping.log' (Expected 0, got 1)"/>
+    <error message="Command 'kill ' (Expected 0, got 1)"/>
   </testcase>
   <testcase name="Cleanup" assertions="2"/>
 </testsuite>

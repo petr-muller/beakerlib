@@ -14,14 +14,14 @@
     <property name="purpose" value="PURPOSE of /CoreOS/thermostat1/Sanity/thermostat-logging&#10;Description: The test sets logging level to FINEST and checks the logs.&#10;Author: Joe the Tester &lt;jttester@redhat.com&gt;&#10;"/>
   </properties>
   <testcase name="Setup" assertions="5">
-    <error message="Checking for the presence of thermostat1 rpm "/>
+    <failure message="Checking for the presence of thermostat1 rpm "/>
   </testcase>
   <testcase name="Test" assertions="8">
-    <failure message="Unsuccesful agent without storage (Expected 0, got 127)"/>
-    <failure message="File /root/.thermostat/logs/thermostat.log should exist "/>
-    <failure message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
-    <failure message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
-    <failure message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
+    <error message="Unsuccesful agent without storage (Expected 0, got 127)"/>
+    <error message="File /root/.thermostat/logs/thermostat.log should exist "/>
+    <error message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
+    <error message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
+    <error message="rlAssertGrep: failed to find file /root/.thermostat/logs/thermostat.log "/>
   </testcase>
   <testcase name="Cleanup" assertions="2"/>
 </testsuite>
