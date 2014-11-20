@@ -37,7 +37,7 @@ MODULES=journal.sh\
 		synchronisation.sh\
 		virtualX.sh
 
-FILES=$(MODULES) beakerlib.sh
+FILES=$(MODULES) beakerlib.sh xunit.xsl
 DEFDOCS=dictionary.vim docsman
 
 .PHONY: install clean test
